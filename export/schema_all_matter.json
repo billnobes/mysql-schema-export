@@ -1,0 +1,481 @@
+{
+    "database": "matter",
+    "generated_at": "2025-08-08T19:54:24-04:00",
+    "schema_version": "2025-08-08",
+    "tables": [
+        {
+            "name": "cab_thor_assessments",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "auto_increment",
+                    "comment": "",
+                    "position": 1
+                },
+                {
+                    "name": "assessmentid",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "Thor Assessment ID",
+                    "position": 2
+                },
+                {
+                    "name": "type",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 3
+                },
+                {
+                    "name": "published",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 4
+                },
+                {
+                    "name": "baseline_name",
+                    "type": "varchar(255)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 5
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 6
+                }
+            ],
+            "primary_key": [
+                "id"
+            ],
+            "unique": [],
+            "indexes": [
+                {
+                    "name": "Index 1",
+                    "unique": false,
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "foreign_keys": [],
+            "table_info": {
+                "row_count_est": 63,
+                "engine": "InnoDB",
+                "collation": "utf8mb4_general_ci"
+            },
+            "ddl": "CREATE TABLE `cab_thor_assessments` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `assessmentid` int(11) NOT NULL COMMENT 'Thor Assessment ID',\n  `type` int(11) DEFAULT NULL,\n  `published` date NOT NULL,\n  `baseline_name` varchar(255) NOT NULL,\n  `description` text DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `Index 1` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Thor Assessments'"
+        },
+        {
+            "name": "cab_thor_assetmanager",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "auto_increment",
+                    "comment": "Cab Asset ID",
+                    "position": 1
+                },
+                {
+                    "name": "assessmentid",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 2
+                },
+                {
+                    "name": "assetid",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": "0",
+                    "extra": "",
+                    "comment": "Thor Asset ID",
+                    "position": 3
+                },
+                {
+                    "name": "file",
+                    "type": "longblob",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 4
+                },
+                {
+                    "name": "thumbfile",
+                    "type": "longblob",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 5
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 6
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "nullable": false,
+                    "default": "current_timestamp()",
+                    "extra": "on update current_timestamp()",
+                    "comment": "",
+                    "position": 7
+                }
+            ],
+            "primary_key": [
+                "id"
+            ],
+            "unique": [],
+            "indexes": [],
+            "foreign_keys": [],
+            "table_info": {
+                "row_count_est": 0,
+                "engine": "InnoDB",
+                "collation": "utf8mb4_general_ci"
+            },
+            "ddl": "CREATE TABLE `cab_thor_assetmanager` (\n  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Cab Asset ID',\n  `assessmentid` int(11) NOT NULL,\n  `assetid` int(11) NOT NULL DEFAULT 0 COMMENT 'Thor Asset ID',\n  `file` longblob NOT NULL,\n  `thumbfile` longblob DEFAULT NULL,\n  `name` varchar(255) NOT NULL,\n  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),\n  PRIMARY KEY (`id`) USING BTREE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC"
+        },
+        {
+            "name": "cab_thor_questions",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "auto_increment",
+                    "comment": "",
+                    "position": 1
+                },
+                {
+                    "name": "assessment_id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 2
+                },
+                {
+                    "name": "section_id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "Cab Section ID",
+                    "position": 3
+                },
+                {
+                    "name": "question_id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "Thor Question ID",
+                    "position": 4
+                },
+                {
+                    "name": "qb_id",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 5
+                },
+                {
+                    "name": "sec_pdf_id",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 6
+                },
+                {
+                    "name": "sec_pdf_name",
+                    "type": "varchar(255)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 7
+                },
+                {
+                    "name": "sec_asset_id",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 8
+                },
+                {
+                    "name": "sec_asset_name",
+                    "type": "varchar(255)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 9
+                },
+                {
+                    "name": "q_asset_id",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 10
+                },
+                {
+                    "name": "q_asset_name",
+                    "type": "varchar(255)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 11
+                },
+                {
+                    "name": "tag_id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 12
+                },
+                {
+                    "name": "qhash",
+                    "type": "varchar(255)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 13
+                },
+                {
+                    "name": "question_json",
+                    "type": "text",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "",
+                    "position": 14
+                }
+            ],
+            "primary_key": [
+                "id"
+            ],
+            "unique": [
+                {
+                    "name": "Index 1",
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "Index 1",
+                    "unique": true,
+                    "columns": [
+                        "id"
+                    ]
+                },
+                {
+                    "name": "section_id",
+                    "unique": false,
+                    "columns": [
+                        "section_id"
+                    ]
+                }
+            ],
+            "foreign_keys": [],
+            "table_info": {
+                "row_count_est": 2121,
+                "engine": "InnoDB",
+                "collation": "utf8mb4_general_ci"
+            },
+            "ddl": "CREATE TABLE `cab_thor_questions` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `assessment_id` int(11) NOT NULL,\n  `section_id` int(11) NOT NULL COMMENT 'Cab Section ID',\n  `question_id` int(11) NOT NULL COMMENT 'Thor Question ID',\n  `qb_id` int(11) DEFAULT NULL,\n  `sec_pdf_id` int(11) DEFAULT NULL,\n  `sec_pdf_name` varchar(255) DEFAULT NULL,\n  `sec_asset_id` int(11) DEFAULT NULL,\n  `sec_asset_name` varchar(255) DEFAULT NULL,\n  `q_asset_id` int(11) DEFAULT NULL,\n  `q_asset_name` varchar(255) DEFAULT NULL,\n  `tag_id` int(11) NOT NULL,\n  `qhash` varchar(255) NOT NULL,\n  `question_json` text NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `Index 1` (`id`) USING BTREE,\n  KEY `section_id` (`section_id`)\n) ENGINE=InnoDB AUTO_INCREMENT=3051 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Thor Assessment Questions'"
+        },
+        {
+            "name": "cab_thor_sections",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "auto_increment",
+                    "comment": "Cab Section ID",
+                    "position": 1
+                },
+                {
+                    "name": "assessmentid",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": "0",
+                    "extra": "",
+                    "comment": "Cab Assessment ID",
+                    "position": 2
+                },
+                {
+                    "name": "sectionid",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": "0",
+                    "extra": "",
+                    "comment": "Thor Section ID",
+                    "position": 3
+                },
+                {
+                    "name": "assetid",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "0",
+                    "extra": "",
+                    "comment": "Cab Asset ID",
+                    "position": 4
+                },
+                {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 5
+                },
+                {
+                    "name": "pdfid",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 6
+                },
+                {
+                    "name": "pdfname",
+                    "type": "varchar(255)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 7
+                },
+                {
+                    "name": "title",
+                    "type": "varchar(255)",
+                    "nullable": false,
+                    "default": "'0'",
+                    "extra": "",
+                    "comment": "Cab Section Name",
+                    "position": 8
+                },
+                {
+                    "name": "custom_builder_desc",
+                    "type": "text",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "",
+                    "comment": "Cab Section Description",
+                    "position": 9
+                }
+            ],
+            "primary_key": [
+                "id"
+            ],
+            "unique": [],
+            "indexes": [
+                {
+                    "name": "Index 1",
+                    "unique": false,
+                    "columns": [
+                        "id"
+                    ]
+                }
+            ],
+            "foreign_keys": [],
+            "table_info": {
+                "row_count_est": 250,
+                "engine": "InnoDB",
+                "collation": "utf8mb4_general_ci"
+            },
+            "ddl": "CREATE TABLE `cab_thor_sections` (\n  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Cab Section ID',\n  `assessmentid` int(11) NOT NULL DEFAULT 0 COMMENT 'Cab Assessment ID',\n  `sectionid` int(11) NOT NULL DEFAULT 0 COMMENT 'Thor Section ID',\n  `assetid` int(11) DEFAULT 0 COMMENT 'Cab Asset ID',\n  `name` varchar(255) DEFAULT NULL,\n  `pdfid` int(11) DEFAULT NULL,\n  `pdfname` varchar(255) DEFAULT NULL,\n  `title` varchar(255) NOT NULL DEFAULT '0' COMMENT 'Cab Section Name',\n  `custom_builder_desc` text NOT NULL COMMENT 'Cab Section Description',\n  PRIMARY KEY (`id`),\n  KEY `Index 1` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=614 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Copy of approved Thor Assessment sections'"
+        },
+        {
+            "name": "cab_thor_subcats",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "default": null,
+                    "extra": "auto_increment",
+                    "comment": "",
+                    "position": 1
+                },
+                {
+                    "name": "assessmentid",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 2
+                },
+                {
+                    "name": "subcat_id",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "default": "NULL",
+                    "extra": "",
+                    "comment": "",
+                    "position": 3
+                }
+            ],
+            "primary_key": [
+                "id"
+            ],
+            "unique": [],
+            "indexes": [],
+            "foreign_keys": [],
+            "table_info": {
+                "row_count_est": 68,
+                "engine": "InnoDB",
+                "collation": "utf8mb4_general_ci"
+            },
+            "ddl": "CREATE TABLE `cab_thor_subcats` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `assessmentid` int(11) DEFAULT NULL,\n  `subcat_id` int(11) DEFAULT NULL,\n  PRIMARY KEY (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+        }
+    ]
+}
