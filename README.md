@@ -32,7 +32,10 @@ pip install -r requirements.txt
 
 **PHP Version:**
 ```bash
-# Basic usage
+# Basic usage with config.ini file (recommended)
+php export-schema.php
+
+# Basic usage with command line arguments
 php export-schema.php --database mydb --user root --password secret
 
 # With table filtering (only tables starting with 'user_')
@@ -47,7 +50,10 @@ php export-schema.php --help
 
 **Python Version:**
 ```bash
-# Basic usage
+# Basic usage with config.ini file (recommended)
+python export-schema.py
+
+# Basic usage with command line arguments
 python export-schema.py --database mydb --user root --password secret
 
 # With table filtering (only tables starting with 'user_')
@@ -71,6 +77,37 @@ export DB_PASS=secret
 export TABLE_NAME_REGEXP='user_.*'  # PHP: '/user_.*/', Python: 'user_.*'
 
 # Run the export (PHP or Python)
+php export-schema.php
+python export-schema.py
+```
+
+### Configuration File
+
+Create a `config.ini` file from the example template:
+
+```bash
+# Copy and customize the configuration file
+cp config.example.ini config.ini
+# Edit with your database credentials
+nano config.ini
+```
+
+The configuration file uses standard INI format:
+```ini
+[database]
+host = localhost
+name = mydb
+user = root
+password = secret
+port = 3306
+
+[export]
+output_dir = ./export
+table_filter = /.*/
+```
+
+Then simply run without arguments:
+```bash
 php export-schema.php
 python export-schema.py
 ```
