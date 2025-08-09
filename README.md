@@ -1,6 +1,6 @@
 # MySQL Schema Export Utility
 
-A comprehensive PHP utility for exporting MySQL/MariaDB database schemas to JSON format. Exports complete database metadata including tables, columns, constraints, indexes, foreign keys, and DDL statements.
+A comprehensive PHP and Python utility specifically designed for exporting MySQL/MariaDB database schemas to JSON format for AI coding assistants. This tool was developed using both ChatGPT and Claude Code to determine the optimal format for providing complete database structures to AI systems. Exports comprehensive database metadata including tables, columns, constraints, indexes, foreign keys, and DDL statements in an AI-friendly JSON format that enables coding assistants to understand your database schema and generate accurate, context-aware code.
 
 ## Features
 
