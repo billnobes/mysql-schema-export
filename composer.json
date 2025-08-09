@@ -1,0 +1,34 @@
+{
+    "name": "billnobes/mysql-schema-export",
+    "description": "A comprehensive PHP utility for exporting MySQL/MariaDB database schemas to JSON format",
+    "type": "library",
+    "keywords": ["mysql", "schema", "export", "database", "json", "mariadb"],
+    "homepage": "https://github.com/billnobes/mysql-schema-export",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bill Nobes",
+            "email": "bill@nthrive.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "files": ["export-schema.php"]
+    },
+    "bin": ["export-schema.php"],
+    "scripts": {
+        "test": "phpunit",
+        "export": "php export-schema.php"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

@@ -1,25 +1,133 @@
 <?php
 /**
- * Single-File Schema Export (All Tables -> one JSON)
- * MySQL/MariaDB via PDO
+ * MySQL Schema Export Utility
+ * 
+ * Exports MySQL/MariaDB database schema to JSON format with comprehensive metadata
+ * including columns, constraints, indexes, foreign keys, and DDL statements.
  *
- * Output: ./schema_export/schema_all.json
+ * @author Bill Nobes
+ * @license MIT
+ * @version 1.0.0
  */
 
-// === CONFIG ===
-$DB_HOST = 'd.pripyat.dev';
-$DB_NAME = 'matter';
-$DB_USER = 'wnobes';
-$DB_PASS = 'Category-whilst-pilgrim';
+// Parse command line arguments
+function parseArgs($argv) {
+    $options = [
+        'host' => null,
+        'database' => null,
+        'user' => null,
+        'password' => null,
+        'port' => null,
+        'output' => null,
+        'filter' => null,
+        'help' => false
+    ];
+    
+    for ($i = 1; $i < count($argv); $i++) {
+        $arg = $argv[$i];
+        
+        if ($arg === '--help' || $arg === '-h') {
+            $options['help'] = true;
+        } elseif (strpos($arg, '--') === 0) {
+            $key = substr($arg, 2);
+            $value = isset($argv[$i + 1]) ? $argv[$i + 1] : true;
+            
+            switch ($key) {
+                case 'host':
+                    $options['host'] = $value;
+                    $i++;
+                    break;
+                case 'database':
+                case 'db':
+                    $options['database'] = $value;
+                    $i++;
+                    break;
+                case 'user':
+                    $options['user'] = $value;
+                    $i++;
+                    break;
+                case 'password':
+                    $options['password'] = $value;
+                    $i++;
+                    break;
+                case 'port':
+                    $options['port'] = $value;
+                    $i++;
+                    break;
+                case 'output':
+                    $options['output'] = $value;
+                    $i++;
+                    break;
+                case 'filter':
+                    $options['filter'] = $value;
+                    $i++;
+                    break;
+            }
+        }
+    }
+    
+    return $options;
+}
+
+function showHelp() {
+    echo "MySQL Schema Export Utility\n\n";
+    echo "Usage: php export-schema.php [OPTIONS]\n\n";
+    echo "Options:\n";
+    echo "  --host HOST          Database host (default: localhost)\n";
+    echo "  --database DB        Database name (required)\n";
+    echo "  --user USER          Database user (required)\n";
+    echo "  --password PASS      Database password\n";
+    echo "  --port PORT          Database port (default: 3306)\n";
+    echo "  --output DIR         Output directory (default: ./export)\n";
+    echo "  --filter REGEX       Table name filter regex (default: /.*/ for all tables)\n";
+    echo "  --help, -h           Show this help message\n\n";
+    echo "Environment Variables:\n";
+    echo "  DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT\n";
+    echo "  OUTPUT_DIR, TABLE_NAME_REGEXP, SCHEMA_VERSION\n\n";
+    echo "Examples:\n";
+    echo "  php export-schema.php --database mydb --user root\n";
+    echo "  php export-schema.php --db mydb --user root --filter '/user_.*/'\n";
+    echo "  DB_NAME=mydb DB_USER=root php export-schema.php\n";
+}
+
+// Load configuration from config.ini if it exists
+function loadConfigFile($filename = 'config.ini') {
+    if (!file_exists($filename)) {
+        return [];
+    }
+    
+    $config = parse_ini_file($filename, true);
+    if ($config === false) {
+        echo "Warning: Could not parse config file: $filename" . PHP_EOL;
+        return [];
+    }
+    
+    return $config;
+}
+
+$configFile = loadConfigFile();
+$cliArgs = parseArgs($argv ?? []);
+
+if ($cliArgs['help']) {
+    showHelp();
+    exit(0);
+}
+
+// === CONFIGURATION ===
+// Database connection settings - priority: CLI args > environment variables > config file > defaults
+$DB_HOST = $cliArgs['host'] ?: getenv('DB_HOST') ?: ($configFile['database']['host'] ?? 'localhost');
+$DB_NAME = $cliArgs['database'] ?: getenv('DB_NAME') ?: ($configFile['database']['name'] ?? '');
+$DB_USER = $cliArgs['user'] ?: getenv('DB_USER') ?: ($configFile['database']['user'] ?? '');
+$DB_PASS = $cliArgs['password'] ?: getenv('DB_PASS') ?: ($configFile['database']['password'] ?? '');
+$DB_PORT = $cliArgs['port'] ?: getenv('DB_PORT') ?: ($configFile['database']['port'] ?? 3306);
 
 // Table name filter (regex pattern)
-$TABLE_NAME_REGEXP = '/.*/';  // Use '/.*/' for all tables, '/string.*/' for selected tables only
+$TABLE_NAME_REGEXP = $cliArgs['filter'] ?: getenv('TABLE_NAME_REGEXP') ?: ($configFile['export']['table_filter'] ?? '/.*/');
 
-
-
-$OUTPUT_DIR = __DIR__ . '/export';
+// Output settings
+$OUTPUT_DIR = $cliArgs['output'] ?: getenv('OUTPUT_DIR') ?: ($configFile['export']['output_dir'] ?? (__DIR__ . '/export'));
 $OUTPUT_FILE = $OUTPUT_DIR . "/schema_{$DB_NAME}.json";
-$SCHEMA_VERSION = date('Y-m-d'); // bump manually if you prefer
+$SCHEMA_VERSION = getenv('SCHEMA_VERSION') ?: date('Y-m-d');
 
 // === SETUP ===
 if (!is_dir($OUTPUT_DIR)) {
@@ -32,8 +140,25 @@ $options = [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ];
 
+// Validate required configuration
+if (empty($DB_NAME) || empty($DB_USER)) {
+    echo "Error: Database name and user are required." . PHP_EOL;
+    echo "Use --database and --user arguments, or set DB_NAME and DB_USER environment variables." . PHP_EOL;
+    echo "Run 'php export-schema.php --help' for usage information." . PHP_EOL;
+    exit(1);
+}
+
+// Validate table filter regex
+if (!empty($TABLE_NAME_REGEXP)) {
+    if (@preg_match($TABLE_NAME_REGEXP, '') === false) {
+        echo "Error: Invalid regex pattern in table filter: {$TABLE_NAME_REGEXP}" . PHP_EOL;
+        exit(1);
+    }
+}
+
 try {
     $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $options);
+    echo "Connected to database: {$DB_NAME}@{$DB_HOST}" . PHP_EOL;
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage() . PHP_EOL);
 }
@@ -90,7 +215,7 @@ $tablesOut = [];
 $totalTables = count($tables);
 $currentTable = 0;
 
-echo "Processing $totalTables tables..." . PHP_EOL;
+echo "Processing $totalTables tables with filter: {$TABLE_NAME_REGEXP}..." . PHP_EOL;
 
 foreach ($tables as $t) {
     $table = $t[0];
@@ -232,9 +357,19 @@ $out = [
     'tables'         => $tablesOut,
 ];
 
-file_put_contents(
-    $OUTPUT_FILE,
-    json_encode($out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-);
+$jsonOutput = json_encode($out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
+if ($jsonOutput === false) {
+    echo "Error: Failed to encode JSON data" . PHP_EOL;
+    exit(1);
+}
+
+if (file_put_contents($OUTPUT_FILE, $jsonOutput) === false) {
+    echo "Error: Failed to write output file: $OUTPUT_FILE" . PHP_EOL;
+    exit(1);
+}
+
+$filteredCount = count($tablesOut);
+$fileSize = number_format(filesize($OUTPUT_FILE) / 1024, 1);
 echo "Export complete: $OUTPUT_FILE" . PHP_EOL;
+echo "Exported $filteredCount tables, {$fileSize} KB" . PHP_EOL;
